@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<link rel="apple-touch-icon-precomposed" media="screen" href="apple-touch-icon-precomposed.png" />
+<link rel="apple-touch-startup-image" href="start640.png" />
+
+<title>iFok!</title>
+<link href='layout.css' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="iscroll.js"></script>
+<script src="jquery-1.6.min.js"></script>
+
+<script type="text/javascript" src="jquery.xdomainajax.js"></script>
+<script type="text/javascript" src="ani.js"></script>
+<script type="text/javascript" src="spin.min.js"></script>
+<script type="text/javascript" src="basics.js"></script>
+
+<script type="text/javascript">
+addEventListener("load", function() { setTimeout(
+hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } 
+
+
+if ('standalone' in navigator && !navigator.standalone && (/iphone|ipod|ipad/gi).test(navigator.platform) && (/Safari/i).test(navigator.appVersion)) {
+	document.write('<link rel="stylesheet" href="add2home.css">');
+	document.write('<script type="application/javascript" src="add2home.js"><\/s' + 'cript>');
+}
+
+
+
+// Check if a new cache is available on page load.
+window.addEventListener('load', function(e) {
+
+	
+
+  window.applicationCache.addEventListener('updateready', function(e) {
+    if (window.applicationCache.status == window.applicationCache.UPDATEREADY) {
+      // Browser downloaded a new app cache.
+      // Swap it in and reload the page to get the new hotness.
+      window.applicationCache.swapCache();
+      if (confirm('A new version of this site is available. Load it?')) {
+			localStorage.clear();
+			window.location.reload();
+      }
+    } else {
+      // Manifest didn't changed. Nothing new to server.
+    }
+  }, false);
+
+}, false);
+
+
+
+/*
+ * * * * * * * */
+
+
+/* * * * * * * *
+ *
+ * Use this for iDevice only
+ *
+ */
+//document.addEventListener('DOMContentLoaded', loaded, false);
+/*
+ * * * * * * * */
+
+
+/* * * * * * * *
+ *
+ * Use this if nothing else works
+ *
+ */
+//window.addEventListener('load', setTimeout(function () { loaded(); }, 200), false);
+/*
+ * * * * * * * */
+
+</script>
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-27777506-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+</head>
+<body>
+
+ 
+<div id="header"><div id="wide_title"><span>Fok!</span></div><div id="menu_button" class="button" style="opacity:1"><img src="list.png" width="32" height="12"></div><div id="backbutton" class="back_button"><a href="">Terug</a></div><a id="title" href="#">Fok!</a></div>
+<div id="wrapper">
+	<div id="scroller">
+		<div id="pullDown">
+			<span class="pullDownIcon" id="pullDownIcon"></span><span class="pullDownLabel">Pull down to refresh...</span>
+		</div>
+		<ul id="thelist">
+			
+		</ul>
+		<div id="pullUp">
+			<span class="pullUpIcon" id="pullUpIcon"></span><span class="pullUpLabel">Pull up to refresh...</span>
+		</div>
+	</div>
+</div>
+
+<div id="menu_wrapper">
+	<div id="menu">
+	<ul>
+		<li url="http://www.fok.nl/" content_element="ut_nieuws_headlines">Algemeen</li>
+		<li url="http://www.fok.nl/" content_element="ut_mostread_headlines">Meest gelezen</li>
+		<li url="http://sport.fok.nl/" content_element="ut_nieuws_headlines">Sport</li>
+		<li url="http://games.fok.nl/" content_element="ut_nieuws_headlines">Games</li>
+		<li url="http://film.fok.nl/" content_element="ut_nieuws_headlines">Films</li>
+		<li url="http://www.fok.nl/" content_element="ut_review_headlines">Reviews</li>
+		<li url="http://www.fok.nl/" content_element="ut_column_headlines">Colums</li>
+		
+	</ul>
+	<span id="by">by K Luczycki   <a href="mailto:krisluc@gmail.com">krisluc@gmail.com</a></span>
+	</div>
+</div>
+
+<div id="screendetect"></div>
+
+</body>
+</html>

@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html >
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<link rel="apple-touch-icon-precomposed" media="screen" href="icon.png" />
+
+<title>iScroll demo: simple</title>
+<link href='layout.css' rel='stylesheet' type='text/css'>
+<script type="text/javascript" src="iscroll.js"></script>
+<script src="jquery-1.6.min.js"></script>
+
+<script type="text/javascript" src="jquery.xdomainajax.js"></script>
+<script type="text/javascript" src="ani.js"></script>
+<script type="text/javascript" src="spin.min.js"></script>
+
+<script type="text/javascript">
+addEventListener("load", function() { setTimeout(
+hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } 
+
+$(document).ready(function(){
+
+	var content_url = 'http://www.fok.nl'
+
+	init();
+
+	function init()
+	{
+		//resultaten ophalen van fok.nl
+		$.get(content_url,function(response)
+		{
+			var item = ($(response.responseText).find('#ut_nieuws_headlines'));
+			var count = 0;
+			var link = $(item).find('.trackerItems a');
+			var links = ($(item).find('a'));
+			loadlist(links);
+		
+		})
+	}
+	
+	function clearlist()
+	{
+		$("#thelist li").remove();
+	}
+	
+	function loadlist(links) //links = urls die in de list moeten
+	{
+		clearlist();
+		for (i=0;i<links.length;i++)
+		{
+			$("#thelist").append('<li title="'+$(links[i]).text()+'"><a href="#" url="'+$(links[i]).attr('href')+'" title="'+$(links[i]).text().substr(0,60)+'">'+$(links[i]).text().substr(0,40)+'...</a></li>');	
+		}
+		
+		$("#scroller").css({'height':$("#scroller").css('height')+45});
+
+		setTimeout(function () {
+			myScroll.refresh();
+			
+		}, 0);		
+	}
+	
+	function loaditem(object,textid,textwrap) //niewsartikel ophalen
+	{
+		$("#wrapper").css({'background-color':'#FFF'});
+		$('.selected').removeClass('selected');
+		
+		object.addClass('selected');
+		var title = object.attr('title');
+
+		$("#wrapper_content").remove();
+		$("body").append('<div id="wrapper_content"><div id="scroller_content"><div class="content" id="content"><div id="spinwrap"></div></div></div></div>');
+			myScroll2 = new iScroll('wrapper_content');
+		
+
+	
+		$("#wrapper").css({'background-color':'#FFF'});
+		
+	
+		
+		$("#wrapper_content").addClass('from_right_to_left');
+		
+		
+		$("#backbutton").animateWithCss(
+		  {"-webkit-transform": "translate3d(40%,0%, 0)","opacity":"1"}, // CSS properties to animate
+		  400,                       // Duration in ms
+		  "cubic-bezier",             // The timing function
+		  function(){                 // Callback
+			
+		
+		  }
+		);
+					
+
+		//list naar links uit beeld sliden
+		$("#title").animateWithCss(
+		  {"-webkit-transform": "translate3d(-50%,0%, 0)","opacity":0}, // CSS properties to animate
+		  200,                       // Duration in ms
+		  "cubic-bezier",             // The timing function
+		  function(){                 // Callback
+				
+				$("#title").css({'display':'none'});
+				$("#header").append('<a class="itemtitle" href="test">'+object.attr('title')+'</a>');
+				
+				$(".itemtitle").animateWithCss(
+				  {"-webkit-transform": "translate3d(15%,0%, 0)","opacity":1}, // CSS properties to animate
+				  50,                       // Duration in ms
+				  "cubic-bezier",             // The timing function
+				  function(){                 // Callback
+						
+					
+				  }
+				);		
+				
+		  }
+		);
+
+		//list naar links uit beeld sliden
+		$("#thelist").animateWithCss(
+		  {"-webkit-transform": "translate3d(-100%,0%, 0)"}, // CSS properties to animate
+		  200,                       // Duration in ms
+		  "cubic-bezier",             // The timing function
+			function(){                 // Callback
+				//nieuwsitem ophalen van fok.nl
+				
+				add_spinner('spinwrap');	
+				
+				$.get(object.children('a').attr('url'),function(response){
+
+					
+					var text = '';
+					$(response.responseText).find(textid+' '+textwrap).each(function(){
+						$(this).find('input').remove();
+						$(this).find('.reactieContainer').find('span img').remove();
+						$(this).find('.reactieUserIcon').wrap('<div class="img_wrap"></div>');
+						var reacties = $(this).find('.reactieContainer').html()
+						$(this).find('.reactieContainer').remove();
+						$(this).children('div').remove();
+						$(this).children('#newsicon').remove();
+						$(this).children('table').remove();
+						$(this).children('a:last-child').remove();
+						
+						text += $(this).html()+reacties;
+						
+					})
+					
+		
+			
+
+					$("#wrapper_content").removeClass('to_right');
+				
+					$("#wrapper").css({'background-color':'#aaa'});
+				
+					$(".content").html('<img style="float: left; margin-right: 5px;" src="'+$(response.responseText).find('.itemBody').children('img').attr('src')+'">'+text);
+				
+					setTimeout(function () {
+						myScroll2.scrollTo(0, 0, 0);
+						myScroll2.refresh();
+					
+					}, 0);	
+			
+			
+					
+
+				});
+			
+			}
+		);
+	
+		
+		
+	}
+	
+		//listitem click
+		$("#thelist li").live('click',function()
+		{
+			loaditem($(this),'.itemBody','');
+		})
+		
+		function add_spinner(target)
+		{
+			var opts = {
+				lines: 12, // The number of lines to draw
+				length: 7, // The length of each line
+				width: 2, // The line thickness
+				radius: 5, // The radius of the inner circle
+				color: '#000', // #rgb or #rrggbb
+				speed: 2, // Rounds per second
+				trail: 60, // Afterglow percentage
+				shadow: false // Whether to render a shadow
+			};
+			
+			var target = document.getElementById(target);
+			var spinner = new Spinner(opts).spin();
+			target.appendChild(spinner.el);
+		}
+		
+		$("#title").click(function()
+		{
+			myScroll.scrollTo(0, 0, 0);
+		})
+		
+			
+		$("#menu").click(function()
+		{
+			show_menu();
+		})
+		
+
+	
+		function show_menu()
+		{
+		
+			$("#wrapper").animateWithCss(
+			  {"-webkit-transform": "translate3d(100%,0%, 0)"}, // CSS properties to animate
+			  200,                       // Duration in ms
+			  "cubic-bezier",             // The timing function
+			  function(){                 // Callback
+					
+			
+			  }
+			);
+		}
+	
+	
+		$("#backbutton").live('click',function()
+		{
+
+			$("#backbutton").animateWithCss(
+			  {"-webkit-transform": "translate3d(100%,0%, 0)","opacity":"0"}, // CSS properties to animate
+			  400,                       // Duration in ms
+			  "cubic-bezier",             // The timing function
+			  function(){                 // Callback
+					
+			
+			  }
+			);
+
+			$(".itemtitle").animateWithCss(
+			  {"-webkit-transform": "translate3d(100%,0%, 0)","opacity":0}, // CSS properties to animate
+			  200,                       // Duration in ms
+			  "cubic-bezier",             // The timing function
+			  function(){                 // Callback
+		
+					$(".itemtitle").remove()
+					
+			  }
+			);		
+			
+			$("#wrapper_content").animateWithCss(
+			  {"-webkit-transform": "translate3d(100%,0%, 0)","opacity":0}, // CSS properties to animate
+			  200,                       // Duration in ms
+			  "cubic-bezier",             // The timing function
+			  function(){                 // Callback
+		
+					
+			  }
+			);
+			
+			$("#title").css({'display':'block',"-webkit-transform": "translate3d(-50%,0%, 0)"});
+			$("#thelist").animateWithCss(
+			  {"-webkit-transform": "translate3d(0%,0%, 0)"}, // CSS properties to animate
+			  200,                       // Duration in ms
+			  "cubic-bezier",             // The timing function
+			  function(){                 // Callback
+			
+
+			  }
+			);
+			
+			$("#title").text('Fok!');
+			$("#title").animateWithCss(
+			  {"-webkit-transform": "translate3d(0%,0%, 0)","opacity":"1"}, // CSS properties to animate
+			  200,                       // Duration in ms
+			  "cubic-bezier",             // The timing function
+			  function(){                 // Callback
+				
+			
+			  }
+			);
+			
+			return false;
+		})
+		
+		
+
+var myScroll,
+	pullDownEl, pullDownOffset,
+	pullUpEl, pullUpOffset,
+	generatedCount = 0;
+
+function pullDownAction () {
+	
+	init();
+
+}
+
+function pullUpAction () {
+
+	init();
+}
+
+function loaded() {
+	pullDownEl = document.getElementById('pullDown');
+	pullDownOffset = pullDownEl.offsetHeight;
+	pullUpEl = document.getElementById('pullUp');	
+	pullUpOffset = pullUpEl.offsetHeight;
+	
+	myScroll = new iScroll('wrapper',{
+	useTransition: true,
+		topOffset: pullDownOffset,
+		onRefresh: function () {
+			if (pullDownEl.className.match('loading')) {
+				
+				pullDownEl.className = '';
+				pullDownEl.querySelector('.pullDownLabel').innerHTML = 'Pull down to refresh...';
+			} else if (pullUpEl.className.match('loading')) {
+				pullUpEl.className = '';
+				pullUpEl.querySelector('.pullUpLabel').innerHTML = 'Pull up to load more...';
+			}
+		},
+		onScrollMove: function () {
+			if (this.y > 5 && !pullDownEl.className.match('flip')) {
+				pullDownEl.className = 'flip';
+				pullDownEl.querySelector('.pullDownLabel').innerHTML = 'Release to refresh...';
+				this.minScrollY = 0;
+			} else if (this.y < 5 && pullDownEl.className.match('flip')) {
+				pullDownEl.className = '';
+				pullDownEl.querySelector('.pullDownLabel').innerHTML = 'Pull down to refresh...';
+				this.minScrollY = -pullDownOffset;
+			} else if (this.y < (this.maxScrollY - 5) && !pullUpEl.className.match('flip')) {
+				pullUpEl.className = 'flip';
+				pullUpEl.querySelector('.pullUpLabel').innerHTML = 'Release to refresh...';
+				this.maxScrollY = this.maxScrollY;
+			} else if (this.y > (this.maxScrollY + 5) && pullUpEl.className.match('flip')) {
+				pullUpEl.className = '';
+				pullUpEl.querySelector('.pullUpLabel').innerHTML = 'Pull up to load more...';
+				this.maxScrollY = pullUpOffset;
+			}
+		},
+		onScrollEnd: function () {
+			if (pullDownEl.className.match('flip')) {
+				pullDownEl.className = 'loading';
+				pullDownEl.querySelector('.pullDownLabel').innerHTML = 'Loading...';				
+				pullDownAction();	// Execute custom function (ajax call?)
+			} else if (pullUpEl.className.match('flip')) {
+				pullUpEl.className = 'loading';
+				pullUpEl.querySelector('.pullUpLabel').innerHTML = 'Loading...';				
+				pullUpAction();	// Execute custom function (ajax call?)
+			}
+		}
+	});
+	add_spinner('pullDownIcon');
+	add_spinner('pullUpIcon');
+
+}
+
+
+
+document.addEventListener('touchmove', function (e) { e.preventDefault(); }, false);
+
+/* * * * * * * *
+ *
+ * Use this for high compatibility (iDevice + Android)
+ *
+ */
+document.addEventListener('DOMContentLoaded', setTimeout(function () { loaded(); }, 200), false);
+
+})
+
+
+/*
+ * * * * * * * */
+
+
+/* * * * * * * *
+ *
+ * Use this for iDevice only
+ *
+ */
+//document.addEventListener('DOMContentLoaded', loaded, false);
+/*
+ * * * * * * * */
+
+
+/* * * * * * * *
+ *
+ * Use this if nothing else works
+ *
+ */
+//window.addEventListener('load', setTimeout(function () { loaded(); }, 200), false);
+/*
+ * * * * * * * */
+
+</script>
+
+<style type="text/css" media="all">
+
+
+</style>
+</head>
+<body>
+
+<div id="header"><div id="menu" class="button" style="display: none; opacity:1">&#8801; </div><div id="backbutton" class="button"><a href="">Terug</a><div></div></div><a id="title" href="#">Fok!</a></div>
+<div id="wrapper">
+	<div id="scroller">
+		<div id="pullDown">
+			<span class="pullDownIcon" id="pullDownIcon"></span><span class="pullDownLabel">Pull down to refresh...</span>
+		</div>
+		<ul id="thelist">
+			
+		</ul>
+		<div id="pullUp">
+			<span class="pullUpIcon" id="pullUpIcon"></span><span class="pullUpLabel">Pull up to refresh...</span>
+		</div>
+	</div>
+	
+</div>
+
+
+</body>
+</html>
