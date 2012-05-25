@@ -1,14 +1,11 @@
 $(document).ready(function(){
-/*
-	var content_url = 'http://www.nu.nl/feeds/rss/algemeen.rss';
-	var content_element = '';
-	var content_links = 'a';*/
+
 	
 	var content_url = 'http://frontpage.fok.nl/';
 	var content_element = '#ut_nieuws_headlines';
 	var content_links = 'a';
 	var counter_text = 'reacties';
-	
+	var pageloaded = false;
 	var direction = 0;
 	var animation_speed = 300;
 	var css = new Array();
@@ -186,6 +183,7 @@ $(document).ready(function(){
 		startpointY = 0;
 
 		var title = object.attr('title');
+		history.pushState({ url: "#" }, "item", "#"+title);
 		console.log(object);
 		
 		if ($("#wrapper_content").length == 0)
@@ -487,11 +485,18 @@ $(document).ready(function(){
 		}
 	
 		///////////////////back button
-		$("#backbutton").live('click',function()
+		$("#backbutton").live('click',function(event)
+		{
+			event.preventDefault();
+			goBack();
+		})
+		
+		function goBack()
 		{
 			css['opacity'] = 0;
 			move_element("#backbutton",100,false,css);
-		
+			history.pushState({ url: "#" }, "home", "#home");
+			
 			$("#menu_button").show();
 			$("#menu_button").animateWithCss(
 				{"-webkit-transform": "translate3d(20%,0%, 0)","opacity":1}, // CSS properties to animate
@@ -550,7 +555,29 @@ $(document).ready(function(){
 			myScroll2.destroy();
 			myScroll2 = null;
 			return false;
-		})
+		}
+		
+		
+
+  
+		  // Bind an event to window.onhashchange that, when the hash changes, gets the
+		  // hash and adds the class "selected" to any matching nav link.
+		  $(window).hashchange( function(){
+			if (!pageloaded) {
+				history.pushState({ url: "#" }, "home", "#home");
+				return;
+			}
+			var hash = location.hash;
+			var hashTag =  hash.replace( /^#/, '' );
+			if (hashTag == 'home') goBack();
+		  })
+		  $(window).hashchange();
+		  pageloaded = true;
+		  
+		  // Since the event is only triggered when the hash changes, we need to trigger
+		  // the event now, to handle the hash the page may have loaded with.
+		  //$(window).hashchange();
+  
 		
 		$("#wrapper_content a").live('click',function(event)
 		{
@@ -705,7 +732,9 @@ function loaded() {
 	add_spinner('pullUpIcon');
 	init(content_element,content_links);
 
+
 }
+
 
 
 

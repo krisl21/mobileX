@@ -10,8 +10,8 @@ body {
 	-webkit-user-select:none;
     -webkit-text-size-adjust:none;
 	font-family:Thonburi,helvetica;
-	background:#aaa url(bg2.png);
-	background-size: 75px 75px; 
+	background:#aaa url(background.png);
+
 }
 
 h1{
@@ -124,7 +124,7 @@ color: rgba(255, 255, 255, 0.3)!important;*/
 only screen and (-webkit-min-device-pixel-ratio: 2),
 only screen and (min-device-pixel-ratio: 2) {
 	#wrapper,#wrapper_content{
-		background-size: 75px 75px;
+		background-size: 160px 160px;
 	}
 }
 
